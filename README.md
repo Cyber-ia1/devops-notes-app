@@ -13,7 +13,7 @@ A small FastAPI web service to practise DevOps fundamentals (code → container 
 
 ### 1. Navigate to your project folder
 ```powershell
-cd path\to\Projects
+cd C:\Users\<YourUsername>\Projects
 mkdir devops-notes-app
 cd devops-notes-app
 
