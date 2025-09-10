@@ -24,7 +24,7 @@ cd devops-notes-app
 
 Set up a clean scaffold for the project so code, tests, and documentation are organized from the start.
 
-create subfolders
+#### create subfolders
 ```
 mkdir app
 mkdir tests
@@ -51,7 +51,7 @@ devops-notes-app/
 ```
 ---
 
-### Step 3 — Install dependencies
+## Step 3 — Install dependencies
 
 This project uses three Python packages:
 
@@ -77,5 +77,29 @@ pip install -r requirements.txt
 THIS INSTALLS THE EXACT VERSIONS LISTED IN THE FILE, ENSURING THE ENVIRONMENT IS IDENTICAL ACROSS MACHINES
 
 
-### Step 4 - Push all files on github
+---
 
+## Step 4 — Initialize Git and push to GitHub
+
+#### Initialize Git in your project folder
+
+```
+git init
+```
+#### Stage all files
+```
+git add .
+```
+#### Make your first commit
+```
+git commit -m "Initial commit: project scaffold + README"
+```
+#### Connect to your GitHub repository
+```
+git remote add origin https://github.com/<your-username>/<repo-name>.git
+```
+#### Push to GitHub
+```
+git branch -M main
+git push -u origin main
+```
