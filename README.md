@@ -49,3 +49,33 @@ devops-notes-app/
   README.md
   requirements.txt
 ```
+---
+
+### Step 3 — Install dependencies
+
+This project uses three Python packages:
+
+- **FastAPI** — framework for building the API routes.  
+- **Uvicorn** — web server to run the FastAPI app.  
+- **Pytest** — testing framework for automated checks.  
+
+
+####  First-time setup (when starting this project from scratch)
+Use this when you first create the project and `requirements.txt` is still empty:
+
+```
+pip install fastapi uvicorn pytest
+pip freeze > requirements.txt
+```
+
+#### Future setups (when requirements.txt already exists)
+Use this when coming back to the project later, or after cloning it from GitHub:
+
+```
+pip install -r requirements.txt
+```
+THIS INSTALLS THE EXACT VERSIONS LISTED IN THE FILE, ENSURING THE ENVIRONMENT IS IDENTICAL ACROSS MACHINES
+
+
+### Step 4 - Push all files on github
+
