@@ -103,3 +103,50 @@ git remote add origin https://github.com/<your-username>/<repo-name>.git
 git branch -M main
 git push -u origin main
 ```
+
+---
+
+### Step 4 — Add the FastAPI app and run it on port 8000
+
+In this step you’ll create the first working version of your web service.
+
+#### Open the `main.py` file
+Inside the `app` folder (created in Step 2), open `main.py` in your editor or Notepad.
+
+Paste the following code:
+
+```
+from fastapi import FastAPI
+
+app = FastAPI(title="DevOps Notes App")
+
+@app.get("/healthz")
+def healthz():
+    # Health check endpoint (used by ops/monitoring)
+    return {"status": "ok"}
+
+@app.get("/hello")
+def hello():
+    # Simple demo endpoint
+    return {"message": "Hello, world!"}
+```
+#### Run the app on port 8000
+
+With the venv active, start Uvicorn:
+
+```
+uvicorn app.main:app --reload --port 8000
+```
+#### Verify it works
+
+Open your browser:
+
+-http://127.0.0.1:8000/healthz
+ → {"status": "ok"}
+
+-http://127.0.0.1:8000/hello
+ → {"message": "Hello, world!"}
+
+-http://127.0.0.1:8000/docs
+ → interactive Swagger documentation.
+
