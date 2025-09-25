@@ -12,7 +12,7 @@ A small FastAPI web service to practise DevOps fundamentals (code → container 
 
 Setup (Windows PowerShell)
 
-## 1. Navigate to your project folder in powershell
+## Step 1 — Navigate to your project folder in powershell
 ```
 cd C:\Users\<YourUsername>\Projects
 mkdir devops-notes-app
@@ -106,7 +106,7 @@ git push -u origin main
 
 ---
 
-### Step 4 — Add the FastAPI app and run it on port 8000
+## Step 5 — Add the FastAPI app and run it on port 8000
 
 In this step you’ll create the first working version of your web service.
 
@@ -141,18 +141,18 @@ uvicorn app.main:app --reload --port 8000
 
 Open your browser:
 
--http://127.0.0.1:8000/healthz
+> http://127.0.0.1:8000/healthz
  → {"status": "ok"}
 
--http://127.0.0.1:8000/hello
+> http://127.0.0.1:8000/hello
  → {"message": "Hello, world!"}
 
--http://127.0.0.1:8000/docs
+> http://127.0.0.1:8000/docs
  → interactive Swagger documentation.
 
 ---
 
-### Step 5 — Containerise with Docker (run the same app anywhere)
+## Step 6 — Containerise with Docker (run the same app anywhere)
 
 This step packages the app **and** its dependencies into a lightweight image so it runs identically on any machine with Docker.
 
@@ -193,34 +193,76 @@ Tells Docker not to copy these items into the image (prevents local junk getting
 
 Create a file named `Dockerfile` in the project root:
 
-dockerfile
+dockerfile (Copy/Paste this into the file)
+```
+1) Small official Python base image
+FROM python:3.11-slim
 
-#### 1) Small official Python base image
-```FROM python:3.11-slim```
+2) Non-root user (security best practice)
+RUN useradd -m appuser
 
-#### 2) Non-root user (security best practice)
-```RUN useradd -m appuser```
+3) Work inside /app
+WORKDIR /app
 
-#### 3) Work inside /app
-```WORKDIR /app```
+4) Copy dependency list first (better caching)
+COPY requirements.txt .
 
-#### 4) Copy dependency list first (better caching)
-```COPY requirements.txt .```
+5) Install Python dependencies inside the image
+RUN pip install --no-cache-dir -r requirements.txt
 
-#### 5) Install Python dependencies inside the image
-```RUN pip install --no-cache-dir -r requirements.txt```
+6) Copy app source code
+COPY app ./app
 
-#### 6) Copy app source code
-```COPY app ./app```
+7) Run as non-root
+USER appuser
 
-#### 7) Run as non-root
-```USER appuser```
+8) Document the port the app listens on
+EXPOSE 8000
 
-#### 8) Document the port the app listens on
-```EXPOSE 8000```
+9) Start the server when the container runs
+0.0.0.0 makes it reachable from outside the container
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+### What’s happening so far:
 
-#### 9) Start the server when the container runs
-####   0.0.0.0 makes it reachable from outside the container
-```CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]```
+- FROM picks a tiny Linux + Python base.
+
+- COPY requirements.txt + RUN pip install installs deps inside the image.
+
+- COPY app brings in your FastAPI code.
+
+- CMD [...] runs the app with Uvicorn on port 8000.
+
+#### Build the Docker image
+
+From the project root (where the Dockerfile lives):
+```
+docker build -t devops-notes-app:latest .
+```
+#### Run the container
+
+```
+docker run --rm -p 8000:8000 devops-notes-app:latest
+```
+### Open in your browser:
+
+> http://127.0.0.1:8000/healthz
+
+> http://127.0.0.1:8000/hello
+
+> http://127.0.0.1:8000/docs
+
+Stop the container with Ctrl + C in the terminal.
+
+---
+## REMEMBER
+### Rebuild when you change code
+
+Images are snapshots. If you edit Python files, rebuild and run again:
+```
+docker build -t devops-notes-app:latest .
+docker run --rm -p 8000:8000 devops-notes-app:latest
+```
+
 
 
