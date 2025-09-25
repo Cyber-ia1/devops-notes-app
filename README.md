@@ -150,3 +150,77 @@ Open your browser:
 -http://127.0.0.1:8000/docs
  → interactive Swagger documentation.
 
+---
+
+### Step 5 — Containerise with Docker (run the same app anywhere)
+
+This step packages the app **and** its dependencies into a lightweight image so it runs identically on any machine with Docker.
+
+- Prereqs: Install Docker Desktop, open it, and ensure it says **Running**.  
+- Verify in a terminal:
+
+`docker --version`
+
+---
+
+#### Create a `.dockerignore` (keeps images small & clean)
+
+Create a file named `.dockerignore` in the project root and paste:
+
+```
+pycache/
+*.py[cod]
+.venv/
+venv/
+ENV/
+env/
+.git/
+.gitignore
+.pytest_cache/
+.DS_Store
+Thumbs.db
+*.log
+build/
+dist/
+
+```
+What this does:
+Tells Docker not to copy these items into the image (prevents local junk getting added in).
+
+---
+
+#### Create a `Dockerfile` (the build recipe)
+
+Create a file named `Dockerfile` in the project root:
+
+dockerfile
+
+#### 1) Small official Python base image
+```FROM python:3.11-slim```
+
+#### 2) Non-root user (security best practice)
+```RUN useradd -m appuser```
+
+#### 3) Work inside /app
+```WORKDIR /app```
+
+#### 4) Copy dependency list first (better caching)
+```COPY requirements.txt .```
+
+#### 5) Install Python dependencies inside the image
+```RUN pip install --no-cache-dir -r requirements.txt```
+
+#### 6) Copy app source code
+```COPY app ./app```
+
+#### 7) Run as non-root
+```USER appuser```
+
+#### 8) Document the port the app listens on
+```EXPOSE 8000```
+
+#### 9) Start the server when the container runs
+####   0.0.0.0 makes it reachable from outside the container
+```CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]```
+
+
